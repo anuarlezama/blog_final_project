@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseConfig } from '../../../domain/config/database.interface';
+import { JwtConfig } from '../../../domain/config/jwt.interface';
 
 @Injectable()
-export class EnvironmentConfigService implements DatabaseConfig {
+export class EnvironmentConfigService implements DatabaseConfig, JwtConfig {
   constructor(private configService: ConfigService) {}
 
   getDatabaseHost(): string {
@@ -29,5 +30,21 @@ export class EnvironmentConfigService implements DatabaseConfig {
     const host = this.getDatabaseHost();
     const port = this.getDatabasePort();
     return `mongodb://${host}:${port}`;
+  }
+
+  getJwtExpirationTime(): string {
+    return this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME');
+  }
+
+  getJwtRefreshExpirationTime(): string {
+    return this.configService.get<string>('JWT_EXPIRATION_TIME');
+  }
+
+  getJwtRefreshSecret(): string {
+    return this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET');
+  }
+
+  getJwtSecret(): string {
+    return this.configService.get<string>('JWT_SECRET');
   }
 }
